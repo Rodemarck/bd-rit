@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import ritgames.chat.model.Conta;
+import ritgames.chat.model.User;
 
 import javax.print.Doc;
 import java.util.ArrayList;
@@ -18,18 +19,18 @@ public class UserDao {
     private static final  int LEN = ALPHA.length;
     private static final Random rng = new Random();
 
-    public static void listar() throws InterruptedException {
+    public static ArrayList<User> listar() throws InterruptedException {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
 
         FindIterable<Document> documents = collection.find();
+        ArrayList<User> users = new ArrayList<>();
         for(Document doc : documents){
-            System.out.println(doc.toJson());
+            users.add(new User(doc));
         }
         client.close();
-        /*
-        System.out.println(collection.find().filter(query).first().toJson());*/
+       return users;
     }
 
     public static void getConta(String token)throws InterruptedException{
@@ -92,14 +93,14 @@ public class UserDao {
         return sb.toString();
     }
 
-    public static void cadastra(Conta conta, String senha) throws InterruptedException {
+    public static void cadastra(User conta) throws InterruptedException {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
         Document doc = new Document()
                         .append("nome",conta.getNome())
                         .append("login",conta.getLogin())
-                        .append("senha",senha)
+                        .append("senha",conta.getSenha())
                         .append("email",conta.getEmail())
                         .append("type",conta.getType());
         collection.insertOne(doc);
@@ -107,6 +108,7 @@ public class UserDao {
     }
 
     public static Conta logarPorToken(String token){
-        return null;
+        //todo
+        return new Conta("nome", "login", "email", "user");
     }
 }
