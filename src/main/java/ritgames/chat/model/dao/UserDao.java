@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class UserDao {
+
     private static final char[] ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private static final  int LEN = ALPHA.length;
     private static final Random rng = new Random();
+
     public static void listar() throws InterruptedException {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
@@ -104,4 +106,7 @@ public class UserDao {
         client.close();
     }
 
+    public static Conta logarPorToken(String token){
+        return null;
+    }
 }

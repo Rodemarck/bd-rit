@@ -10,6 +10,8 @@ public class ChatApplication {
 
     public static void main(String[] args) throws InterruptedException {
         SpringApplication.run(ChatApplication.class, args);
+
+
         //System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");
         //UserDao.listar();
         /*System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");
