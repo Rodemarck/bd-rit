@@ -17,7 +17,7 @@ public class UserDao {
     private static final  int LEN = ALPHA.length;
     private static final Random rng = new Random();
     public static void listar() throws InterruptedException {
-        MongoClient client = MeuQueridoMongo.getInstance().getClient();
+        MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
 
@@ -31,7 +31,7 @@ public class UserDao {
     }
 
     public static void getConta(String token)throws InterruptedException{
-        MongoClient client = MeuQueridoMongo.getInstance().getClient();
+        MongoClient client = MeuQueridoMongo.getClient();
         BasicDBObject query = new BasicDBObject();
         query.put("tk", token);
         MongoDatabase db = client.getDatabase("rit-games");
@@ -48,7 +48,7 @@ public class UserDao {
     }
 
     public static Conta logar(String login, String senha) throws InterruptedException {
-        MongoClient client = MeuQueridoMongo.getInstance().getClient();
+        MongoClient client = MeuQueridoMongo.getClient();
         BasicDBObject query = new BasicDBObject();
         query.put("login", login);
         query.put("senha",senha);
@@ -91,7 +91,7 @@ public class UserDao {
     }
 
     public static void cadastra(Conta conta, String senha) throws InterruptedException {
-        MongoClient client = MeuQueridoMongo.getInstance().getClient();
+        MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
         Document doc = new Document()
