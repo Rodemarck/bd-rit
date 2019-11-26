@@ -2,6 +2,8 @@ package ritgames.chat.model;
 
 import org.bson.Document;
 
+import java.util.List;
+
 public class Conta {
     private String nome;
     private String login;
@@ -72,5 +74,13 @@ public class Conta {
                 ", type='" + type + '\'' +
                 ", __token__='" + __token__ + '\'' +
                 '}';
+    }
+
+    public Document getDocument() {
+        return new Document()
+                .append("nome",getNome())
+                .append("login",getLogin())
+                .append("email",getEmail())
+                .append("type","user");
     }
 }

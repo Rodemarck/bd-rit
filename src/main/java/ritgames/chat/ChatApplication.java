@@ -3,13 +3,15 @@ package ritgames.chat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import ritgames.chat.model.dao.Exemplo;
 import ritgames.chat.model.dao.UserDao;
 
 @SpringBootApplication(exclude={SecurityAutoConfiguration.class})
 public class ChatApplication {
 
     public static void main(String[] args) throws InterruptedException {
-        SpringApplication.run(ChatApplication.class, args);
+        Exemplo.exemplo();
+       // SpringApplication.run(ChatApplication.class, args);
 
 
         //System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");

@@ -107,8 +107,54 @@ public class UserDao {
         client.close();
     }
 
-    public static Conta logarPorToken(String token){
+    public static Conta logarPorToken(String token) throws InterruptedException {
+        MongoClient client = MeuQueridoMongo.getClient();
+        MongoDatabase db = client.getDatabase("rit-games");
+        MongoCollection<Document> collectionTk = db.getCollection("token");
+        BasicDBObject filtro = new BasicDBObject();
+        filtro.put("tk", token);
+
+        ArrayList<Document> docs = collectionTk.find().filter(filtro).into(new ArrayList<>());
+        if(docs.size() == 0){
+            return null;
+        }
+
+        filtro.clear();
+        filtro.put("_id",docs.get(0).get("contaIdUser"));
+        MongoCollection<Document> collectionUser = db.getCollection("user");
+        ArrayList<Document> docs1 = collectionUser.find(filtro).into(new ArrayList<>());
+        Conta c = new Conta(docs1.get(0));
+
+
+
+
         //todo
-        return new Conta("nome", "login", "email", "user");
+        client.close();
+        return c;
+    }
+
+    public static void atualizar(Conta contaAntiga, User user) throws Exception {
+        MongoClient client = MeuQueridoMongo.getClient();
+        MongoDatabase db = client.getDatabase("rit-games");
+        MongoCollection<Document> collectionUser = db.getCollection("user");
+        BasicDBObject filtro = new BasicDBObject();
+        filtro.put("login", contaAntiga.getNome());
+        filtro.put("senha", user.getSenha());
+
+        ArrayList<Document> docs = collectionUser.find().filter(filtro).into(new ArrayList<>());
+        if(docs.size() == 0){
+            throw new Exception();
+        }
+
+        User c = new User(docs.get(0));
+
+        collectionUser.deleteMany(filtro);
+        c.setNome(user.getNome());
+        c.setSenha(user.getSenha());
+        c.setLogin(user.getLogin());
+        c.setEmail(user.getEmail());
+        c.set__token__(contaAntiga.get__token__());
+
+        collectionUser.insertOne(c.getDocument());
     }
 }

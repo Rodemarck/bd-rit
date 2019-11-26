@@ -22,4 +22,9 @@ public class User extends Conta {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    @Override
+    public Document getDocument() {
+        return super.getDocument().append("senha",getSenha());
+    }
 }
