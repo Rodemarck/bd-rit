@@ -11,7 +11,9 @@ import ritgames.chat.model.User;
 
 import javax.print.Doc;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 public class UserDao {
 
@@ -93,10 +95,16 @@ public class UserDao {
         return sb.toString();
     }
 
-    public static void cadastra(User conta) throws InterruptedException {
+    public static void cadastra(User conta) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
+
+
+        verificaCampo(collection,"nome",conta.getNome());
+        verificaCampo(collection,"login",conta.getLogin());
+        verificaCampo(collection,"email",conta.getEmail());
+
         Document doc = new Document()
                         .append("nome",conta.getNome())
                         .append("login",conta.getLogin())
@@ -153,5 +161,10 @@ public class UserDao {
         c.set__token__(contaAntiga.get__token__());
 
         collectionUser.insertOne(c.getDocument());
+    }
+
+    public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{
+        if(collection.find(new BasicDBObject().append(campo, item)).into(new ArrayList<>()).size() != 0)
+            throw new Exception();
     }
 }

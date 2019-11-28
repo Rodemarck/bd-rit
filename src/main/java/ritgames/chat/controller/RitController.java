@@ -22,7 +22,7 @@ public class RitController {
                           @PathVariable(value="senha") String senha,
                           @PathVariable(value="email") String email,
                           @PathVariable(value="type") String type
-    )throws InterruptedException {
+    ) throws Exception {
         User user = new User(nome, login, email, type, senha);
         UserDao.cadastra(user);
     }
