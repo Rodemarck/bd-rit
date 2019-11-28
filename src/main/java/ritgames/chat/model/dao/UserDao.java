@@ -138,29 +138,30 @@ public class UserDao {
         return c;
     }
 
-    public static void atualizar(Conta contaAntiga, User user) throws Exception {
+    public static void atualizar(String login, String senha, User novaConta) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collectionUser = db.getCollection("user");
         BasicDBObject filtro = new BasicDBObject();
-        filtro.put("login", contaAntiga.getNome());
-        filtro.put("senha", user.getSenha());
+        filtro.put("login", login);
+        filtro.put("senha", senha);
 
         ArrayList<Document> docs = collectionUser.find().filter(filtro).into(new ArrayList<>());
         if(docs.size() == 0){
             throw new Exception();
         }
-
-        User c = new User(docs.get(0));
-
         collectionUser.deleteMany(filtro);
-        c.setNome(user.getNome());
-        c.setSenha(user.getSenha());
-        c.setLogin(user.getLogin());
-        c.setEmail(user.getEmail());
-        c.set__token__(contaAntiga.get__token__());
 
-        collectionUser.insertOne(c.getDocument());
+        User contaAntiga = new User(docs.get(0));
+
+        if(!contaAntiga.getNome().equals(novaConta.getNome()))
+            verificaCampo(collectionUser,"nome",novaConta.getNome());
+        if(!contaAntiga.getEmail().equals(novaConta.getEmail()))
+            verificaCampo(collectionUser,"email",novaConta.getEmail());
+        if(!contaAntiga.getLogin().equals(novaConta.getLogin()))
+            verificaCampo(collectionUser,"login",novaConta.getLogin());
+
+        collectionUser.insertOne(novaConta.getDocument());
     }
 
     public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{

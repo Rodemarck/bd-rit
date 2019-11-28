@@ -37,4 +37,16 @@ public class RitController {
         return UserDao.listar();
     }
 
+    @PostMapping("/conta/atualizar/{login}/{senha}/{novoNome}/{novoLogin}/{novoSenha}/{novoEmail}/{novoType}")
+    public void atualizaConta(
+            @PathVariable(value="login") String login,
+            @PathVariable(value="senha") String senha,
+            @PathVariable(value="novoNome") String novoNome,
+            @PathVariable(value="novoLogin") String novoLogin,
+            @PathVariable(value="novoSenha") String novoSenha,
+            @PathVariable(value="novoEmail") String novoEmail,
+            @PathVariable(value="novoType") String novoType
+    ) throws Exception {
+        UserDao.atualizar(login,senha,new User(novoNome,novoLogin,novoEmail,novoType,novoSenha));
+    }
 }
