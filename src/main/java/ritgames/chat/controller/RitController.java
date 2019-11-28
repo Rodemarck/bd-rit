@@ -28,7 +28,7 @@ public class RitController {
     }
 
     @GetMapping("/conta/token/{tk}")
-    public Conta logarPorToken(@PathVariable(value="tk") String tk){
+    public Conta logarPorToken(@PathVariable(value="tk") String tk) throws Exception{
         return UserDao.logarPorToken(tk);
     }
 
