@@ -10,16 +10,7 @@ import ritgames.chat.model.dao.UserDao;
 public class ChatApplication {
 
     public static void main(String[] args) throws InterruptedException {
-        Exemplo.exemplo();
-       // SpringApplication.run(ChatApplication.class, args);
-
-
-        //System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");
-        //UserDao.listar();
-        /*System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");
-        System.out.println(UserDao.logar("iury","123"));
-        System.out.println("\n\n\n\n\n------------------------------\n\n\n\n\n");
-        UserDao.listar();*/
+        SpringApplication.run(ChatApplication.class, args);
     }
 
 }
