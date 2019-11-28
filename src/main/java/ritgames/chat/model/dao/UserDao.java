@@ -165,6 +165,6 @@ public class UserDao {
 
     public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{
         if(collection.find(new BasicDBObject().append(campo, item)).into(new ArrayList<>()).size() != 0)
-            throw new Exception("campo [" + campo + "]=\"" + item + "\" já está em uso");
+            throw new Exception("campo " + campo + " [" + item + "] já está em uso");
     }
 }
