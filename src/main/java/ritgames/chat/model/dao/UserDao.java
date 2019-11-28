@@ -181,15 +181,15 @@ public class UserDao {
             throw new Exception("campo " + campo + " [" + item + "] já está em uso");
     }
 
-    public static Conta getContaByLogin(String login) throws Exception {
+    public static Conta getContaByNome(String nome) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
         BasicDBObject filtro = new BasicDBObject()
-                .append("login", login);
+                .append("nome", nome);
         ArrayList<Document> docs = collection.find(filtro).into(new ArrayList<>());
         if(docs.size() == 0){
-            throw new Exception("login invalido");
+            throw new Exception("nome invalido");
         }
         client.close();
         return new Conta(docs.get(0));
