@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 public class UserDao {
 
-    private static final char[] ALPHA = "!@#$%&*+-/<>=;?.,|()[]{}0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    private static final char[] ALPHA = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private static final  int LEN = ALPHA.length;
     private static final Random rng = new Random();
 
