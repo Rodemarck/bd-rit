@@ -49,4 +49,9 @@ public class RitController {
     ) throws Exception {
         UserDao.atualizar(login,senha,new User(novoNome,novoLogin,novoEmail,novoType,novoSenha));
     }
+
+    @GetMapping("/conta/get-login/{login}")
+    public Conta getPorLogin(@PathVariable(value="login") String login) throws Exception {
+        return UserDao.getContaByLogin(login);
+    }
 }

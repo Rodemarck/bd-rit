@@ -17,11 +17,11 @@ import java.util.concurrent.ExecutionException;
 
 public class UserDao {
 
-    private static final char[] ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    private static final char[] ALPHA = "!@#$%&*+-/<>=^~;?.,|()[]{}0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private static final  int LEN = ALPHA.length;
     private static final Random rng = new Random();
 
-    public static ArrayList<User> listar() throws InterruptedException {
+    synchronized public static ArrayList<User> listar() throws InterruptedException {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
@@ -35,7 +35,7 @@ public class UserDao {
        return users;
     }
 
-    public static void getConta(String token)throws InterruptedException{
+    synchronized public static void getConta(String token)throws InterruptedException{
         MongoClient client = MeuQueridoMongo.getClient();
         BasicDBObject query = new BasicDBObject();
         query.put("tk", token);
@@ -52,7 +52,7 @@ public class UserDao {
         client.close();
     }
 
-    public static Conta logar(String login, String senha) throws InterruptedException {
+    synchronized public static Conta logar(String login, String senha) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         BasicDBObject query = new BasicDBObject();
         query.put("login", login);
@@ -61,7 +61,7 @@ public class UserDao {
         MongoCollection<Document> collection = db.getCollection("user");
         ArrayList<Document> docs =collection.find().filter(query).into(new ArrayList<>());
         if(docs.size() == 0){
-            return null;
+            throw new Exception("login ou senha invalidos");
         }
         Conta c = new Conta(docs.get(0));
         System.out.println("\n\n\n\n\t" + docs.get(0).toJson() + "\n\n\n\n\t");
@@ -88,22 +88,19 @@ public class UserDao {
         return c;
     }
 
-    private static String geraString(){
+    synchronized private static String geraString(){
         StringBuffer sb = new StringBuffer();
         for(int i=0;i<24;i++)
             sb.append(ALPHA[rng.nextInt(LEN)]);
         return sb.toString();
     }
 
-    public static void cadastra(User conta) throws Exception {
+    synchronized public static void cadastra(User conta) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collection = db.getCollection("user");
 
-
-        verificaCampo(collection,"nome",conta.getNome());
-        verificaCampo(collection,"login",conta.getLogin());
-        verificaCampo(collection,"email",conta.getEmail());
+        testarConta(collection, conta);
 
         Document doc = new Document()
                         .append("nome",conta.getNome())
@@ -115,7 +112,20 @@ public class UserDao {
         client.close();
     }
 
-    public static Conta logarPorToken(String token) throws Exception {
+    synchronized private static void testarConta(MongoCollection<Document> collection, Conta conta) throws Exception {
+        testaLogin(conta.getLogin());
+        verificaCampo(collection,"nome",conta.getNome());
+        verificaCampo(collection,"login",conta.getLogin());
+        verificaCampo(collection,"email",conta.getEmail());
+    }
+
+    synchronized private static void testaLogin(String login) throws Exception {
+        if(login.equals("get-login") || login.equals("atualizar") ||
+                login.equals("listar") || login.equals("token") || login.equals("cadastrar") || login.equals("logar"))
+            throw  new Exception("login invalido");
+    }
+
+    synchronized public static Conta logarPorToken(String token) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collectionTk = db.getCollection("token");
@@ -124,7 +134,7 @@ public class UserDao {
 
         ArrayList<Document> docs = collectionTk.find().filter(filtro).into(new ArrayList<>());
         if(docs.size() == 0){
-            throw new Exception("erros no sistema");
+            throw new Exception("token não encontrado");
         }
 
         filtro.clear();
@@ -138,7 +148,7 @@ public class UserDao {
         return c;
     }
 
-    public static void atualizar(String login, String senha, User novaConta) throws Exception {
+    synchronized public static void atualizar(String login, String senha, User novaConta) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collectionUser = db.getCollection("user");
@@ -148,7 +158,7 @@ public class UserDao {
 
         ArrayList<Document> docs = collectionUser.find().filter(filtro).into(new ArrayList<>());
         if(docs.size() == 0){
-            throw new Exception();
+            throw new Exception("login ou senha invalidos");
         }
         collectionUser.deleteMany(filtro);
 
@@ -158,14 +168,30 @@ public class UserDao {
             verificaCampo(collectionUser,"nome",novaConta.getNome());
         if(!contaAntiga.getEmail().equals(novaConta.getEmail()))
             verificaCampo(collectionUser,"email",novaConta.getEmail());
-        if(!contaAntiga.getLogin().equals(novaConta.getLogin()))
-            verificaCampo(collectionUser,"login",novaConta.getLogin());
+        if(!contaAntiga.getLogin().equals(novaConta.getLogin())) {
+            testaLogin(novaConta.getLogin());
+            verificaCampo(collectionUser, "login", novaConta.getLogin());
+        }
 
         collectionUser.insertOne(novaConta.makeDocument());
     }
 
-    public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{
+    synchronized public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{
         if(collection.find(new BasicDBObject().append(campo, item)).into(new ArrayList<>()).size() != 0)
             throw new Exception("campo " + campo + " [" + item + "] já está em uso");
+    }
+
+    synchronized public static Conta getContaByLogin(String login) throws Exception {
+        MongoClient client = MeuQueridoMongo.getClient();
+        MongoDatabase db = client.getDatabase("rit-games");
+        MongoCollection<Document> collection = db.getCollection("user");
+        BasicDBObject filtro = new BasicDBObject()
+                .append("login", login);
+        ArrayList<Document> docs = collection.find(filtro).into(new ArrayList<>());
+        if(docs.size() == 0){
+            throw new Exception("login invalido");
+        }
+        client.close();
+        return new Conta(docs.get(0));
     }
 }
