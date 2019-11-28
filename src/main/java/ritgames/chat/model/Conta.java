@@ -76,7 +76,7 @@ public class Conta {
                 '}';
     }
 
-    public Document getDocument() {
+    public Document makeDocument() {
         return new Document()
                 .append("nome",getNome())
                 .append("login",getLogin())

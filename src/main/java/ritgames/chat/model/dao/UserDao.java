@@ -161,7 +161,7 @@ public class UserDao {
         if(!contaAntiga.getLogin().equals(novaConta.getLogin()))
             verificaCampo(collectionUser,"login",novaConta.getLogin());
 
-        collectionUser.insertOne(novaConta.getDocument());
+        collectionUser.insertOne(novaConta.makeDocument());
     }
 
     public static void verificaCampo(MongoCollection<Document> collection, String campo, Object item) throws Exception{

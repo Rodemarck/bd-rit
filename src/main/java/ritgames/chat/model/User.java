@@ -24,7 +24,7 @@ public class User extends Conta {
     }
 
     @Override
-    public Document getDocument() {
-        return super.getDocument().append("senha",getSenha());
+    public Document makeDocument() {
+        return super.makeDocument().append("senha",getSenha());
     }
 }
