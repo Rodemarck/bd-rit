@@ -107,7 +107,7 @@ public class UserDao {
         client.close();
     }
 
-    public static Conta logarPorToken(String token) throws InterruptedException {
+    public static Conta logarPorToken(String token) throws Exception {
         MongoClient client = MeuQueridoMongo.getClient();
         MongoDatabase db = client.getDatabase("rit-games");
         MongoCollection<Document> collectionTk = db.getCollection("token");
@@ -116,7 +116,7 @@ public class UserDao {
 
         ArrayList<Document> docs = collectionTk.find().filter(filtro).into(new ArrayList<>());
         if(docs.size() == 0){
-            return null;
+            throw new Exception("erros no sistema");
         }
 
         filtro.clear();
@@ -124,9 +124,6 @@ public class UserDao {
         MongoCollection<Document> collectionUser = db.getCollection("user");
         ArrayList<Document> docs1 = collectionUser.find(filtro).into(new ArrayList<>());
         Conta c = new Conta(docs1.get(0));
-
-
-
 
         //todo
         client.close();
