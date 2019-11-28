@@ -15,12 +15,7 @@ import ritgames.chat.model.dao.UserDao;
 public class ChatApplication {
 
     public static void main(String[] args) throws InterruptedException {
-        //SpringApplication.run(ChatApplication.class, args);
-        MongoClient client = MeuQueridoMongo.getClient();
-        MongoDatabase db = client.getDatabase("rit-games");
-        MongoCollection<Document> collection = db.getCollection("user");
-        collection.drop();
-        client.close();
+        SpringApplication.run(ChatApplication.class, args);
     }
 
 }
